@@ -10,7 +10,9 @@ namespace BoAndTheBovineClient
     public class MainWindowViewModel : ViewModelBase
     {
         private string _actual;
+        private string _actualPathAndFilename;
         private string _expected;
+        private string _expectedPathAndFilename;
         private string _fromVs2012;
         private string _result;
 
@@ -26,7 +28,22 @@ namespace BoAndTheBovineClient
                 }
             }
         }
-        public string Expected { 
+
+        public string ActualPathAndFilename
+        {
+            get { return _actualPathAndFilename; }
+            set
+            {
+                if (_actualPathAndFilename != value)
+                {
+                    _actualPathAndFilename = value;
+                    RaisePropertyChanged("ActualPathAndFilename");
+                }
+            }
+        }
+
+        public string Expected
+        { 
             get{ return _expected;}
             set
             {
@@ -34,6 +51,19 @@ namespace BoAndTheBovineClient
                 {
                     _expected = value;
                     RaisePropertyChanged("Expected");
+                }
+            }
+        }
+
+        public string ExpectedPathAndFilename
+        {
+            get { return _expectedPathAndFilename; }
+            set
+            {
+                if (_expectedPathAndFilename  != value)
+                {
+                    _expectedPathAndFilename = value;
+                    RaisePropertyChanged("ExpectedPathAndFilename");
                 }
             }
         }

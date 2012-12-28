@@ -6,6 +6,7 @@
         mc:Ignorable="d" 
         x:Class="BoAndTheBovineClient.MainWindow"
         xmlns:local="clr-namespace:BoAndTheBovineClient"
+        xmlns:p="clr-namespace:BoAndTheBovineClient.Properties"
         Title="Bo and the Bovine" Height="350" Width="525" Background="#FFFFB273" Foreground="Black"
     >
     <!--<Window.DataContext>
@@ -13,6 +14,7 @@
     </Window.DataContext>-->
 
     <Window.Resources>
+        <RoutedUICommand x:Key="OpenExpectedFileCommand" Text="Open expected file..."/>
         <RoutedUICommand x:Key="ShowSettingsCommand" Text="Settings..."/>
         <RoutedUICommand x:Key="CopyFromVS2012Command" Text="Copy form VS2012" />
         <RoutedUICommand x:Key="CompareCommand" Text="Compare" />
@@ -21,16 +23,18 @@
     </Window.Resources>
     
     <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource OpenExpectedFileCommand}" Executed="OpenExpectedFileButton_Click"/>
         <CommandBinding Command="{StaticResource ShowSettingsCommand}" Executed="ShowSettingsButton_Click"/>
         <CommandBinding Command="{StaticResource CopyFromVS2012Command}" 
                     Executed="CopyFromVS2012Button_Click" />
         <CommandBinding Command="{StaticResource CompareCommand}" 
-                    Executed="ExecuteButton_Click" />
+                    Executed="CompareButton_Click" />
         <CommandBinding Command="{StaticResource ExitApplicationCommand}" 
                     Executed="CloseButton_Click" />
     </Window.CommandBindings>
 
     <Window.InputBindings>
+        <KeyBinding Key="OemPeriod" Modifiers="Alt" Command="{StaticResource OpenExpectedFileCommand}"/>
         <KeyBinding Key="OemComma" Modifiers="Control" Command="{StaticResource ShowSettingsCommand}"/>
         <KeyBinding Key="V" Modifiers="Alt" Command="{StaticResource CopyFromVS2012Command}" />
         <KeyBinding Key="X" Modifiers="Alt" Command="{StaticResource ExitApplicationCommand}" />
@@ -52,14 +56,27 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
             <ColumnDefinition />
+			<ColumnDefinition Width="10"/>
+			<ColumnDefinition Width="30"/>
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
+        
         <Grid Grid.Column="1" Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="30"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Expected:" Grid.Column="0"/>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <Label Content="{x:Static p:Resources.Label_Expected}"/>
+                <Label Content="("/>
+                <Label Content="{Binding ExpectedPathAndFilename}">
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding ExpectedPathAndFilename}" />
+                    </ToolTipService.ToolTip>
+                </Label>
+                <Label Content=")"/>
+            </StackPanel>
             <Button Grid.Column="1" HorizontalAlignment="Right"  Width="30" Height="30" Click="ShowSettingsButton_Click"
                     ToolTipService.Placement="MousePoint" >
                 <Image Width="24" Height="24" Source="{StaticResource SettingsImage}"/>
@@ -68,9 +85,34 @@
                 </ToolTipService.ToolTip>
             </Button>
         </Grid>
-        <TextBox Text="{Binding Expected}"  Grid.Column="1" Grid.Row="1"/>
-        <Label Content="Actual:" Grid.Column="1" Grid.Row="2"/>
-        <TextBox Text="{Binding Actual}"  Grid.Column="1" Grid.Row="3"/>
+        
+        <TextBox Text="{Binding Expected}"  Grid.Column="1" Grid.Row="1">
+            <ToolTipService.ToolTip>
+                <TextBlock Text="The expected text." />
+            </ToolTipService.ToolTip>
+        </TextBox>
+
+        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2">
+            <Label Content="{x:Static p:Resources.Label_Actual}" />
+            <Label Content="("/>
+            <Label Content="{Binding ActualPathAndFilename}">
+                <ToolTipService.ToolTip>
+                    <TextBlock Text="{Binding ActualPathAndFilename}" />
+                </ToolTipService.ToolTip>
+            </Label>
+            <Label Content=")"/>
+        </StackPanel>
+        <TextBox Text="{Binding Actual}"  Grid.Column="1" Grid.Row="3">
+            <ToolTipService.ToolTip>
+                <TextBlock Text="The actual text." />
+            </ToolTipService.ToolTip>
+        </TextBox>
+        <Button Grid.Column="3" Grid.Row="1" Content="..." Click="OpenExpectedFileButton_Click">
+            <ToolTipService.ToolTip>
+                <TextBlock Text="Open file for the expected text." />
+            </ToolTipService.ToolTip>
+		</Button>
+        
         <Label Content="Result:" Grid.Column="1" Grid.Row="4"/>
         <TextBox Text="{Binding Result}"  Grid.Column="1" Grid.Row="5" 
                  ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
@@ -87,7 +129,7 @@
 					<TextBlock Text="Mark the output from MSUnit test, Copy.  Then press this button." />
 				</ToolTipService.ToolTip>
             </Button>
-            <Button Grid.Column="1" Click="ExecuteButton_Click" Background="#FFFF9640" ToolTipService.Placement="MousePoint" 
+            <Button Grid.Column="1" Click="CompareButton_Click" Background="#FFFF9640" ToolTipService.Placement="MousePoint" 
                     Command="{StaticResource CompareCommand}">
                 <TextBlock><Underline><Run Text="C"/></Underline><Run Text="ompare"/></TextBlock>
 				<ToolTipService.ToolTip>

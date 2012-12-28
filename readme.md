@@ -18,3 +18,5 @@ is output.  It is not difficult to parse the expected and actual strings by hand
 ## Versions
 1.0.0
 First numbered version.
+1.1
+Added the possibility to read files.

@@ -15,7 +15,7 @@
 
 [assembly: AssemblyCompany("LIUS")]
 [assembly: AssemblyProduct("Bo and the Bovine")]
-[assembly: AssemblyCopyright("Copyright ©  2012")]
+[assembly: AssemblyCopyright("Free and open source license 2012")]
 [assembly: AssemblyTrademark("F/OSS")]
 
 
@@ -27,5 +27,5 @@
 //  (Major.Minor.Patch). Bug fixes not affecting the API increment the patch version, backwards 
 //  compatible API additions/changes increment the minor version, and backwards incompatible API changes 
 //  increment the major version.
-[assembly: AssemblyVersion("1.0.0.*")]
-[assembly: AssemblyFileVersion("1.0.0.*")]
+[assembly: AssemblyVersion("1.1.0.*")]
+[assembly: AssemblyFileVersion("1.1.0.*")]
