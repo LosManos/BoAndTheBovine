@@ -13,32 +13,37 @@
     </Window.DataContext>-->
 
     <Window.Resources>
+        <RoutedUICommand x:Key="ShowSettingsCommand" Text="Settings..."/>
         <RoutedUICommand x:Key="CopyFromVS2012Command" Text="Copy form VS2012" />
-        <RoutedUICommand x:Key="ExecuteCommand" Text="Execute" />
+        <RoutedUICommand x:Key="CompareCommand" Text="Compare" />
         <RoutedUICommand x:Key="ExitApplicationCommand" Text="Exit application" />
+        <BitmapImage x:Key="SettingsImage" UriSource="Resources/24_settings.png"/>
     </Window.Resources>
     
     <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource ShowSettingsCommand}" Executed="ShowSettingsButton_Click"/>
         <CommandBinding Command="{StaticResource CopyFromVS2012Command}" 
                     Executed="CopyFromVS2012Button_Click" />
-        <CommandBinding Command="{StaticResource ExecuteCommand}" 
+        <CommandBinding Command="{StaticResource CompareCommand}" 
                     Executed="ExecuteButton_Click" />
         <CommandBinding Command="{StaticResource ExitApplicationCommand}" 
                     Executed="CloseButton_Click" />
     </Window.CommandBindings>
 
     <Window.InputBindings>
+        <KeyBinding Key="OemComma" Modifiers="Control" Command="{StaticResource ShowSettingsCommand}"/>
         <KeyBinding Key="V" Modifiers="Alt" Command="{StaticResource CopyFromVS2012Command}" />
         <KeyBinding Key="X" Modifiers="Alt" Command="{StaticResource ExitApplicationCommand}" />
-        <KeyBinding Key="E" Modifiers="Alt" Command="{StaticResource ExecuteCommand}" />
+        <KeyBinding Key="C" Modifiers="Alt" Command="{StaticResource CompareCommand}" />
         <KeyBinding Key="Escape" Command="{StaticResource ExitApplicationCommand}" />
     </Window.InputBindings>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="25" />
             <RowDefinition Height="25"/>
+            <RowDefinition Height="25" />
             <RowDefinition Height="25" />
             <RowDefinition Height="*" />
             <RowDefinition Height="45" />
@@ -49,13 +54,27 @@
             <ColumnDefinition />
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
-        <Label Content="Expected:" Grid.Column="1" Grid.Row="0"/>
+        <Grid Grid.Column="1" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Expected:" Grid.Column="0"/>
+            <Button Grid.Column="1" HorizontalAlignment="Right"  Width="30" Height="30" Click="ShowSettingsButton_Click"
+                    ToolTipService.Placement="MousePoint" >
+                <Image Width="24" Height="24" Source="{StaticResource SettingsImage}"/>
+                <ToolTipService.ToolTip>
+                    <TextBlock Text="Open About and settings (ctrl - comma)" />
+                </ToolTipService.ToolTip>
+            </Button>
+        </Grid>
         <TextBox Text="{Binding Expected}"  Grid.Column="1" Grid.Row="1"/>
         <Label Content="Actual:" Grid.Column="1" Grid.Row="2"/>
         <TextBox Text="{Binding Actual}"  Grid.Column="1" Grid.Row="3"/>
-        <TextBox Text="{Binding Result}"  Grid.Column="1" Grid.Row="4" 
+        <Label Content="Result:" Grid.Column="1" Grid.Row="4"/>
+        <TextBox Text="{Binding Result}"  Grid.Column="1" Grid.Row="5" 
                  ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
-        <Grid Grid.Row="5" Grid.Column="1">
+        <Grid Grid.Row="6" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -69,8 +88,8 @@
 				</ToolTipService.ToolTip>
             </Button>
             <Button Grid.Column="1" Click="ExecuteButton_Click" Background="#FFFF9640" ToolTipService.Placement="MousePoint" 
-                    Command="{StaticResource ExecuteCommand}">
-                <TextBlock><Underline><Run Text="E"/></Underline><Run Text="xecute"/></TextBlock>
+                    Command="{StaticResource CompareCommand}">
+                <TextBlock><Underline><Run Text="C"/></Underline><Run Text="ompare"/></TextBlock>
 				<ToolTipService.ToolTip>
 					<TextBlock Text="Write or paste text in Expected and Actual.  Then press this button to see the difference." />
 				</ToolTipService.ToolTip>

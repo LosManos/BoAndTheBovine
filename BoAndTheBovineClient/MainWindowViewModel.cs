@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BoAndTheBovineClient
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel : ViewModelBase
     {
         private string _actual;
         private string _expected;
@@ -64,15 +64,5 @@ namespace BoAndTheBovineClient
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void RaisePropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
     }
 }

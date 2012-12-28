@@ -21,7 +21,7 @@ namespace BoAndTheBovineClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainWindowViewModel _viewmodel = new MainWindowViewModel();
+        private readonly MainWindowViewModel _viewmodel = new MainWindowViewModel();
 
         public MainWindow()
         {
@@ -68,6 +68,12 @@ namespace BoAndTheBovineClient
                 MessageBox.Show("Something when wrong.  Did you copy the text from the unit test output of VS2012 or is it something wrong inside BoandtheBovine?",
                     "Bo and the Bovine", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void ShowSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var wnd = new SettingsDialogue();
+            wnd.ShowDialog();
         }
 
         private static IList<string> Compare( string s1, string s2 ){
