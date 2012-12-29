@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BoAndTheBovineClient
+﻿namespace BoAndTheBovineClient
 {
     public class MainWindowViewModel : ViewModelBase
     {
@@ -13,8 +6,15 @@ namespace BoAndTheBovineClient
         private string _actualPathAndFilename;
         private string _expected;
         private string _expectedPathAndFilename;
+        private bool _isMultiLine;
+        private bool _isSingleLine;
         private string _fromVs2012;
         private string _result;
+
+        public MainWindowViewModel()
+        {
+            _isMultiLine = ! IsSingleLine;  //  No change event is raised.  Is this correct behaviour?
+        }
 
         public string Actual
         {
@@ -25,6 +25,7 @@ namespace BoAndTheBovineClient
                 {
                     _actual = value;
                     RaisePropertyChanged("Actual");
+                    IsMultiLine = _actual.Contains("\n");
                 }
             }
         }
@@ -77,6 +78,34 @@ namespace BoAndTheBovineClient
                 {
                     _fromVs2012 = value;
                     RaisePropertyChanged("FromVS2012");
+                }
+            }
+        }
+
+        public bool IsMultiLine
+        {
+            get { return _isMultiLine; }
+            set
+            {
+                if (_isMultiLine != value)
+                {
+                    _isMultiLine = value;
+                    RaisePropertyChanged("IsMultiLine");
+                    IsSingleLine = !_isMultiLine;
+                }
+            }
+        }
+
+        public bool IsSingleLine
+        {
+            get { return _isSingleLine; }
+            set
+            {
+                if ( _isSingleLine != value)
+                {
+                    _isSingleLine = value;
+                    RaisePropertyChanged("IsSingleLIne");
+                    IsMultiLine = !_isSingleLine;
                 }
             }
         }

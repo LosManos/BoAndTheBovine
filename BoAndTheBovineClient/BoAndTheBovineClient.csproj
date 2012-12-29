@@ -57,6 +57,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BoolToVisibleOrHiddenConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.shared.cs" />
     <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="SettingsDialogue.xaml.cs">

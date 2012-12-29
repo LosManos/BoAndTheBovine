@@ -40,11 +40,40 @@ namespace BoAndTheBovineClient
 
         private void CompareButton_Click(object sender, RoutedEventArgs e)
         {
-            _viewmodel.Result =
-                string.Join(
-                    Environment.NewLine,
-                    Compare(_viewmodel.Actual, _viewmodel.Expected)
-                );
+            if (_viewmodel.IsSingleLine)
+            {
+                _viewmodel.Result =
+                    string.Join(
+                        Environment.NewLine,
+                        Compare(_viewmodel.Actual, _viewmodel.Expected)
+                        );
+            }
+            else
+            {
+                var compareResult = Bompare.Compare.Execute(_viewmodel.Actual, _viewmodel.Expected);
+                for (var i = 0; i < compareResult.StringDifferenceList.Count; ++i)
+                {
+                    var cmpPair = compareResult.StringDifferenceList[i];
+                    var textbox = new TextBox();
+                    if (cmpPair.Similar)
+                    {
+                        textbox.Text = cmpPair.Text1;
+                        textbox.Background = (Brush)new BrushConverter().ConvertFrom("#67E667");
+                    }
+                    else
+                    {
+                        textbox.Text = cmpPair.Text1 + Environment.NewLine + cmpPair.Text2;
+                        textbox.Background = (Brush)new BrushConverter().ConvertFrom("#FF7373");
+                    }
+
+                    var stackpanel = new StackPanel() {Orientation = Orientation.Horizontal};
+                    stackpanel.Children.Add(
+                        new Label() {Content = i.ToString()}
+                        );
+                    stackpanel.Children.Add(textbox);
+                    ResultStackpanel.Children.Add(stackpanel);
+                }
+            }
         }
 
         private void CopyFromVS2012Button_Click(object sender, RoutedEventArgs e)
@@ -71,8 +100,19 @@ namespace BoAndTheBovineClient
             }
         }
 
-        private void OpenExpectedFileButton_Click(object sender, RoutedEventArgs e)
+        private void OpenActualFileButton_Click(object sender, RoutedEventArgs e)
         {
+#if DEBUG
+            //HACK.  This is for some fast debugging.
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                _viewmodel.ExpectedPathAndFilename = "Z:\\Documents\\Development\\Projects\\EverCoow\\EverCoow.Net\\EverCoow\\EverCoow.UnitTest\\Data\\ MyArticlesChapter2.enex";
+                _viewmodel.Expected = ReadTextOfFile(_viewmodel.ExpectedPathAndFilename);
+                _viewmodel.ActualPathAndFilename = "Z:\\Documents\\Development\\Projects\\EverCoow\\EverCoow.Net\\EverCoow\\EverCoow.UnitTest\\Data\\ArticleAsPlaceholder.enex";
+                _viewmodel.Actual = ReadTextOfFile(_viewmodel.ActualPathAndFilename);
+                return;
+            }
+#endif
             var dlg = new OpenFileDialog
                 {
                     Multiselect = true
@@ -102,6 +142,12 @@ namespace BoAndTheBovineClient
             }
         }
 
+        private void ShowSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var wnd = new SettingsDialogue();
+            wnd.ShowDialog();
+        }
+
         /// <summary>This method reads a text document and returns its contents as a string.
         /// </summary>
         /// <param name="path"></param>
@@ -125,13 +171,9 @@ namespace BoAndTheBovineClient
             }
             return ret;
         }
-        private void ShowSettingsButton_Click(object sender, RoutedEventArgs e)
-        {
-            var wnd = new SettingsDialogue();
-            wnd.ShowDialog();
-        }
 
-        private static IEnumerable<string> Compare( string s1, string s2 ){
+        private static IEnumerable<string> Compare(string s1, string s2)
+        {
             Bompare.CompareResult compareResult = Bompare.Compare.Execute(s1, s2);
 
             if (compareResult.Similar)

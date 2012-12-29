@@ -16,7 +16,9 @@ It is targeted for use with Visual Studio unit tests when a test fails and a str
 is output.  It is not difficult to parse the expected and actual strings by hand but tedious.  And boring.  Did I say tedious?
 
 ## Versions
-1.0.0
-First numbered version.
-1.1
-Added the possibility to read files.
+1.0.0  
+First numbered version.  
+1.1  
+Added the possibility to read files.  
+1.2
+Created a more visual diff when comparing multiple lines.
