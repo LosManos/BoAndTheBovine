@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.Windows.Controls.Primitives;
 
 namespace BoAndTheBovineClient
 {
@@ -54,26 +55,75 @@ namespace BoAndTheBovineClient
                 for (var i = 0; i < compareResult.StringDifferenceList.Count; ++i)
                 {
                     var cmpPair = compareResult.StringDifferenceList[i];
-                    var textbox = new TextBox();
+                    TextBox similarTextbox = null, expectedTextbox = null, actualTextbox = null;
                     if (cmpPair.Similar)
                     {
-                        textbox.Text = cmpPair.Text1;
-                        textbox.Background = (Brush)new BrushConverter().ConvertFrom("#67E667");
+                        similarTextbox = new TextBox();
+                        similarTextbox.Text = cmpPair.Text1;
+                        similarTextbox.Background = (Brush) new BrushConverter().ConvertFrom("#67E667");
+                        similarTextbox.Visibility = Visibility.Collapsed;
+                            //HACK:  This row hides the similar texts.  Do something clever about it.
                     }
                     else
                     {
-                        textbox.Text = cmpPair.Text1 + Environment.NewLine + cmpPair.Text2;
-                        textbox.Background = (Brush)new BrushConverter().ConvertFrom("#FF7373");
+                        expectedTextbox = new TextBox()
+                            {
+                                Text = cmpPair.Text1,
+                                Background = (Brush) new BrushConverter().ConvertFrom("#FF7373")
+                            };
+                        actualTextbox = new TextBox()
+                            {
+                                Text = cmpPair.Text2,
+                                Background = (Brush) new BrushConverter().ConvertFrom("#FF7373")
+                            };
+                        expectedTextbox.AddHandler(Control.MouseDoubleClickEvent, _notSimilarTextboxClickHandler);
+                        actualTextbox.AddHandler(Control.MouseDoubleClickEvent, _notSimilarTextboxClickHandler);
                     }
 
-                    var stackpanel = new StackPanel() {Orientation = Orientation.Horizontal};
+                    var stackpanel = new StackPanel() {Orientation = Orientation.Vertical};
                     stackpanel.Children.Add(
                         new Label() {Content = i.ToString()}
                         );
-                    stackpanel.Children.Add(textbox);
+                    if (null != similarTextbox)
+                    {
+                        stackpanel.Children.Add(similarTextbox);
+                    }
+                    if (null != expectedTextbox)
+                    {
+                        stackpanel.Children.Add(expectedTextbox);
+                    }
+                    if (null != actualTextbox)
+                    {
+                        stackpanel.Children.Add(actualTextbox);
+                    }
                     ResultStackpanel.Children.Add(stackpanel);
                 }
             }
+        }
+
+        private readonly RoutedEventHandler _notSimilarTextboxClickHandler = MyNotSimilarTextboxClickHandler;
+
+        private static void MyNotSimilarTextboxClickHandler(object sender, RoutedEventArgs e)
+        {
+            var control = (Control) sender;
+            var stackpanel = (StackPanel) control.Parent;
+
+            var expectedString = ((TextBox)stackpanel.Children[1]).Text;
+            var actualString  = ((TextBox)stackpanel.Children[2]).Text;
+
+            var expectedChars = string.Join(",", expectedString.Select(c => FormatCharacter( c )));
+            var actualChars = string.Join(",", actualString.Select(c => FormatCharacter(c)));
+            stackpanel.Children.Add(new TextBox() { Text = expectedChars });
+            stackpanel.Children.Add(new TextBox() { Text = actualChars });
+        }
+
+        /// <summary>This method formats the parameter character to something to showl in a list to the user.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        private static string FormatCharacter(char c)
+        {
+            return (char.IsWhiteSpace(c) ? ' ' : c) + ((int) c).ToString("D3");
         }
 
         private void CopyFromVS2012Button_Click(object sender, RoutedEventArgs e)
