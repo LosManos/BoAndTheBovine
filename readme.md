@@ -23,7 +23,9 @@ Added the possibility to read files.
 1.2  
 Created a more visual diff when comparing multiple lines.  
 1.3  
-#9	Implemented rudimentary char code visualisation.  
+Implemented rudimentary char code visualisation.  (#9)  
 Updated the colours when comparing multiple lines.  
 Changed background colouring to border colouring.  
-#13	Made it possible to do more than one multiline comparison without restart.  
+Made it possible to do more than one multiline comparison without restart.  (#13)  
+1.3.1  
+Fixed readme.md (this file) formatting error.  
