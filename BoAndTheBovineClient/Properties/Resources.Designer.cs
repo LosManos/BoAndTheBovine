@@ -71,6 +71,33 @@ namespace BoAndTheBovineClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 33CCCC.
+        /// </summary>
+        public static string ActualColour {
+            get {
+                return ResourceManager.GetString("ActualColour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FF7373.
+        /// </summary>
+        public static string DifferentColour {
+            get {
+                return ResourceManager.GetString("DifferentColour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 5CCCCC.
+        /// </summary>
+        public static string ExpectedColour {
+            get {
+                return ResourceManager.GetString("ExpectedColour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Actual:.
         /// </summary>
         public static string Label_Actual {
@@ -94,6 +121,15 @@ namespace BoAndTheBovineClient.Properties {
         public static string Label_Result {
             get {
                 return ResourceManager.GetString("Label_Result", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 67E667.
+        /// </summary>
+        public static string SimilarColour {
+            get {
+                return ResourceManager.GetString("SimilarColour", resourceCulture);
             }
         }
     }

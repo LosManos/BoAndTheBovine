@@ -25,6 +25,8 @@ namespace BoAndTheBovineClient
     {
         private readonly MainWindowViewModel _viewmodel = new MainWindowViewModel();
 
+        private readonly RoutedEventHandler _notSimilarTextboxClickHandler = MyNotSimilarTextboxClickHandler;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -51,6 +53,8 @@ namespace BoAndTheBovineClient
             }
             else
             {
+                ResultStackpanel.Children.Clear();  //  We have to clear the result between two comparisons.
+
                 var compareResult = Bompare.Compare.Execute(_viewmodel.Actual, _viewmodel.Expected);
                 for (var i = 0; i < compareResult.StringDifferenceList.Count; ++i)
                 {
@@ -58,23 +62,28 @@ namespace BoAndTheBovineClient
                     TextBox similarTextbox = null, expectedTextbox = null, actualTextbox = null;
                     if (cmpPair.Similar)
                     {
-                        similarTextbox = new TextBox();
-                        similarTextbox.Text = cmpPair.Text1;
-                        similarTextbox.Background = (Brush) new BrushConverter().ConvertFrom("#67E667");
-                        similarTextbox.Visibility = Visibility.Collapsed;
-                            //HACK:  This row hides the similar texts.  Do something clever about it.
+                        similarTextbox = new TextBox()
+                            {
+                                Text = cmpPair.Text1,
+                                BorderThickness = new Thickness( 5), 
+                                BorderBrush = CreateColourFromHex(Properties.Resources.SimilarColour),
+                                ////HACK:  This row hides the similar texts.  Do something clever about it.
+                                //Visibility = Visibility.Collapsed
+                            };
                     }
                     else
                     {
                         expectedTextbox = new TextBox()
                             {
                                 Text = cmpPair.Text1,
-                                Background = (Brush) new BrushConverter().ConvertFrom("#FF7373")
+                                BorderThickness = new Thickness(5), 
+                                BorderBrush = CreateColourFromHex(Properties.Resources.DifferentColour)
                             };
                         actualTextbox = new TextBox()
                             {
                                 Text = cmpPair.Text2,
-                                Background = (Brush) new BrushConverter().ConvertFrom("#FF7373")
+                                BorderThickness = new Thickness(5), 
+                                BorderBrush = CreateColourFromHex(Properties.Resources.DifferentColour)
                             };
                         expectedTextbox.AddHandler(Control.MouseDoubleClickEvent, _notSimilarTextboxClickHandler);
                         actualTextbox.AddHandler(Control.MouseDoubleClickEvent, _notSimilarTextboxClickHandler);
@@ -99,31 +108,6 @@ namespace BoAndTheBovineClient
                     ResultStackpanel.Children.Add(stackpanel);
                 }
             }
-        }
-
-        private readonly RoutedEventHandler _notSimilarTextboxClickHandler = MyNotSimilarTextboxClickHandler;
-
-        private static void MyNotSimilarTextboxClickHandler(object sender, RoutedEventArgs e)
-        {
-            var control = (Control) sender;
-            var stackpanel = (StackPanel) control.Parent;
-
-            var expectedString = ((TextBox)stackpanel.Children[1]).Text;
-            var actualString  = ((TextBox)stackpanel.Children[2]).Text;
-
-            var expectedChars = string.Join(",", expectedString.Select(c => FormatCharacter( c )));
-            var actualChars = string.Join(",", actualString.Select(c => FormatCharacter(c)));
-            stackpanel.Children.Add(new TextBox() { Text = expectedChars });
-            stackpanel.Children.Add(new TextBox() { Text = actualChars });
-        }
-
-        /// <summary>This method formats the parameter character to something to showl in a list to the user.
-        /// </summary>
-        /// <param name="c"></param>
-        /// <returns></returns>
-        private static string FormatCharacter(char c)
-        {
-            return (char.IsWhiteSpace(c) ? ' ' : c) + ((int) c).ToString("D3");
         }
 
         private void CopyFromVS2012Button_Click(object sender, RoutedEventArgs e)
@@ -156,9 +140,9 @@ namespace BoAndTheBovineClient
             //HACK.  This is for some fast debugging.
             if (Keyboard.Modifiers == ModifierKeys.Control)
             {
-                _viewmodel.ExpectedPathAndFilename = "Z:\\Documents\\Development\\Projects\\EverCoow\\EverCoow.Net\\EverCoow\\EverCoow.UnitTest\\Data\\ MyArticlesChapter2.enex";
+                _viewmodel.ExpectedPathAndFilename = "Z:\\Documents\\Development\\Projects\\EverCoow\\EverCoow.Net\\EverCoow\\EverCoow.UnitTest\\Data\\ProperMerge.exp.html";
                 _viewmodel.Expected = ReadTextOfFile(_viewmodel.ExpectedPathAndFilename);
-                _viewmodel.ActualPathAndFilename = "Z:\\Documents\\Development\\Projects\\EverCoow\\EverCoow.Net\\EverCoow\\EverCoow.UnitTest\\Data\\ArticleAsPlaceholder.enex";
+                _viewmodel.ActualPathAndFilename = "Z:\\Documents\\Development\\Projects\\EverCoow\\EverCoow.Net\\EverCoow\\EverCoow.UnitTest\\Data\\ProperMerge.out.html";
                 _viewmodel.Actual = ReadTextOfFile(_viewmodel.ActualPathAndFilename);
                 return;
             }
@@ -192,10 +176,31 @@ namespace BoAndTheBovineClient
             }
         }
 
+        private static void MyNotSimilarTextboxClickHandler(object sender, RoutedEventArgs e)
+        {
+            var control = (Control)sender;
+            var stackpanel = (StackPanel)control.Parent;
+
+            var expectedString = ((TextBox)stackpanel.Children[1]).Text;
+            var actualString = ((TextBox)stackpanel.Children[2]).Text;
+
+            var expectedChars = string.Join(",", expectedString.Select(FormatCharacter));
+            var actualChars = string.Join(",", actualString.Select(FormatCharacter));
+            stackpanel.Children.Add(new TextBox() {Text = expectedChars, BorderBrush = CreateColourFromHex(Properties.Resources.ExpectedColour)});
+            stackpanel.Children.Add(new TextBox() {Text = actualChars, BorderBrush = CreateColourFromHex(Properties.Resources.ActualColour)});
+        }
+
         private void ShowSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             var wnd = new SettingsDialogue();
             wnd.ShowDialog();
+        }
+
+#region Private/helper methods.
+		
+        private static Brush CreateColourFromHex(string hexColour)
+    {
+            return (Brush) new BrushConverter().ConvertFrom("#" + hexColour);
         }
 
         /// <summary>This method reads a text document and returns its contents as a string.
@@ -246,10 +251,21 @@ namespace BoAndTheBovineClient
             return strList;
         }
 
-        private Tuple<string, string> WashFromVSResult(string outputFromVS2012)
+        /// <summary>This method formats the parameter character to something to showl in a list to the user.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        private static string FormatCharacter(char c)
+        {
+            return (char.IsWhiteSpace(c) ? ' ' : c) + ((int)c).ToString("D3");
+        }
+
+        private static Tuple<string, string> WashFromVSResult(string outputFromVS2012)
         {
             return Bompare.Wash.FromVS2012TestOutput(outputFromVS2012);
         }
 
+ 
+	#endregion  //  Private/helper methods.
     }
 }
