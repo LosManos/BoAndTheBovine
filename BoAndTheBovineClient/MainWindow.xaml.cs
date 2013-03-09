@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+// ReSharper disable RedundantUsingDirective
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,13 +17,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Controls.Primitives;
+// ReSharper restore RedundantUsingDirective
 
 namespace BoAndTheBovineClient
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// <summary>Interaction logic for MainWindow.xaml.
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
+        // ReSharper disable RedundantExtendsListEntry
+     : Window
+        // ReSharper restore RedundantExtendsListEntry
     {
         private readonly MainWindowViewModel _viewmodel = new MainWindowViewModel();
 
@@ -30,7 +35,7 @@ namespace BoAndTheBovineClient
         public MainWindow()
         {
             InitializeComponent();
-            base.DataContext = _viewmodel;
+            DataContext = _viewmodel;
             _viewmodel.Actual = "actual text";
             _viewmodel.Expected = "expected text";
             _viewmodel.Result = "resulting diff";
@@ -62,7 +67,7 @@ namespace BoAndTheBovineClient
                     TextBox similarTextbox = null, expectedTextbox = null, actualTextbox = null;
                     if (cmpPair.Similar)
                     {
-                        similarTextbox = new TextBox()
+                        similarTextbox = new TextBox
                             {
                                 Text = cmpPair.Text1,
                                 BorderThickness = new Thickness( 5), 
@@ -73,25 +78,25 @@ namespace BoAndTheBovineClient
                     }
                     else
                     {
-                        expectedTextbox = new TextBox()
+                        expectedTextbox = new TextBox
                             {
                                 Text = cmpPair.Text1,
                                 BorderThickness = new Thickness(5), 
                                 BorderBrush = CreateColourFromHex(Properties.Resources.DifferentColour)
                             };
-                        actualTextbox = new TextBox()
+                        actualTextbox = new TextBox
                             {
                                 Text = cmpPair.Text2,
                                 BorderThickness = new Thickness(5), 
                                 BorderBrush = CreateColourFromHex(Properties.Resources.DifferentColour)
                             };
-                        expectedTextbox.AddHandler(Control.MouseDoubleClickEvent, _notSimilarTextboxClickHandler);
-                        actualTextbox.AddHandler(Control.MouseDoubleClickEvent, _notSimilarTextboxClickHandler);
+                        expectedTextbox.AddHandler(MouseDoubleClickEvent, _notSimilarTextboxClickHandler);
+                        actualTextbox.AddHandler(MouseDoubleClickEvent, _notSimilarTextboxClickHandler);
                     }
 
-                    var stackpanel = new StackPanel() {Orientation = Orientation.Vertical};
+                    var stackpanel = new StackPanel {Orientation = Orientation.Vertical};
                     stackpanel.Children.Add(
-                        new Label() {Content = i.ToString()}
+                        new Label {Content = i.ToString(CultureInfo.InvariantCulture)}
                         );
                     if (null != similarTextbox)
                     {
@@ -186,8 +191,8 @@ namespace BoAndTheBovineClient
 
             var expectedChars = string.Join(",", expectedString.Select(FormatCharacter));
             var actualChars = string.Join(",", actualString.Select(FormatCharacter));
-            stackpanel.Children.Add(new TextBox() {Text = expectedChars, BorderBrush = CreateColourFromHex(Properties.Resources.ExpectedColour)});
-            stackpanel.Children.Add(new TextBox() {Text = actualChars, BorderBrush = CreateColourFromHex(Properties.Resources.ActualColour)});
+            stackpanel.Children.Add(new TextBox {Text = expectedChars, BorderBrush = CreateColourFromHex(Properties.Resources.ExpectedColour)});
+            stackpanel.Children.Add(new TextBox {Text = actualChars, BorderBrush = CreateColourFromHex(Properties.Resources.ActualColour)});
         }
 
         private void ShowSettingsButton_Click(object sender, RoutedEventArgs e)
@@ -203,6 +208,7 @@ namespace BoAndTheBovineClient
             return (Brush) new BrushConverter().ConvertFrom("#" + hexColour);
         }
 
+/*
         /// <summary>This method reads a text document and returns its contents as a string.
         /// </summary>
         /// <param name="path"></param>
@@ -212,6 +218,7 @@ namespace BoAndTheBovineClient
         {
             return ReadTextOfFile(Path.Combine(path, filename));
         }
+*/
 
         /// <summary>This method reads a text document and returns its contents as a string.
         /// </summary>
@@ -219,7 +226,7 @@ namespace BoAndTheBovineClient
         /// <returns></returns>
         private static string ReadTextOfFile(string pathAndFilename)
         {
-            string ret = null;
+            string ret;
             using (var sr = File.OpenText(pathAndFilename))
             {
                 ret = sr.ReadToEnd();
@@ -233,22 +240,20 @@ namespace BoAndTheBovineClient
 
             if (compareResult.Similar)
             {
-                return new List<string>() { "Similar" };
+                return new List<string> { "Similar" };
             }
 
-            var strList = new List<string>();
-            foreach (Bompare.CompareResult.StringDifferencePair cmp in compareResult.StringDifferenceList)
-            {
-                strList.Add(
-                    cmp.Similar ?
-                    "." + cmp.Text1 :
-                    Environment.NewLine +
-                    "!" + cmp.Text1 + Environment.NewLine +
-                    "!" + cmp.Text2 + Environment.NewLine
-                );
-            }
-
-            return strList;
+            return compareResult.StringDifferenceList
+                .Select(cmp => 
+                    cmp.Similar ? "." + 
+                    cmp.Text1 : Environment.NewLine + 
+                    "!" + 
+                    cmp.Text1 + 
+                    Environment.NewLine + 
+                    "!" + 
+                    cmp.Text2 + 
+                    Environment.NewLine)
+                .ToList();
         }
 
         /// <summary>This method formats the parameter character to something to showl in a list to the user.
