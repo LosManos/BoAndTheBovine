@@ -27,5 +27,5 @@
 //  (Major.Minor.Patch). Bug fixes not affecting the API increment the patch version, backwards 
 //  compatible API additions/changes increment the minor version, and backwards incompatible API changes 
 //  increment the major version.
-[assembly: AssemblyVersion("1.3.1.*")]
-[assembly: AssemblyFileVersion("1.3.1.*")]
+[assembly: AssemblyVersion("1.3.2.*")]
+[assembly: AssemblyFileVersion("1.3.2.*")]

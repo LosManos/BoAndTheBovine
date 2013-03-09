@@ -1,9 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BompareTest
 {
@@ -14,7 +9,7 @@ namespace BompareTest
         [TestMethod]
         public void FromVS2012TestOutput()
         {
-            string input = "Assert.AreEqual failed. Expected:<XXX>. Actual:<YYY>.";
+            var input = "Assert.AreEqual failed. Expected:<XXX>. Actual:<YYY>.";
 
             var res = Bompare.Wash.FromVS2012TestOutput( input );
 
@@ -32,5 +27,21 @@ namespace BompareTest
                 "Eating cows is like<br/>eating a part of your<br/>soul.<br/><br/>- <a href=\"http://example.com/\" target=\"_blank\">http://example.com/</a>		<- with comment<br/><a href=\"http://example2.com/withoutcomment.aspx?id=42\" target=\"_blank\">http://example2.com/withoutcomment.aspx?id=42</a>", 
                 res.Item2);
         }
+
+//        [TestMethod]
+//        public void FromVS2012TestOutputV2()
+//        {
+//            const string Input = @"Test Name:	ProperMerge
+//Test FullName:	EverCoow.UnitTest.DoTest.ProperMerge
+//Test Source:	\\psf\home\Documents\Development\Projects\EverCoow\EverCoow.Net\EverCoow\EverCoow.UnitTest\DoTest.cs : line 78
+//Test Outcome:	Failed
+//Test Duration:	0:00:01,7588437
+//Result Message:	Assert.AreEqual failed. Expected:<XXX>.Actual<YYY>.";
+
+//            var res = Bompare.Wash.FromVS2012TestOutput(Input);
+
+//            Assert.AreEqual("XXX", res.Item1);
+//            Assert.AreEqual("YYY", res.Item2);            
+//        }
     }
 }

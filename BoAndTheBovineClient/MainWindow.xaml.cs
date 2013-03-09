@@ -267,6 +267,11 @@ namespace BoAndTheBovineClient
 
         private static Tuple<string, string> WashFromVSResult(string outputFromVS2012)
         {
+            if (outputFromVS2012.StartsWith(Bompare.Wash.UnitTestResultType2StartsWith))
+            {
+                var pos = outputFromVS2012.IndexOf(Bompare.Wash.ComparisonResultStartsWith, System.StringComparison.Ordinal);
+                outputFromVS2012 = outputFromVS2012.Remove(0, pos);
+            }
             return Bompare.Wash.FromVS2012TestOutput(outputFromVS2012);
         }
 
