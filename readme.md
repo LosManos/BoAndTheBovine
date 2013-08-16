@@ -1,6 +1,9 @@
 # Bo and the Bovine
 is a small little tiny app that simplifies string comparision.
 
+## NOTE
+I am not maintaining this project. http://approvaltests.sourceforge.net solved the problem that was the seed for this project.
+
 ## Prolem solved
 Visual studio unit tests can have string output with differing strings.  
 Comparing these is tedious.
